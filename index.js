@@ -162,7 +162,7 @@ const viewData = (data) => {
 
 
 
-const addData = async (data) => {
+const addData = (data) => {
     promptAdd().then((data) => {
         switch (data.add) {
             case 'Add Employee':
@@ -178,7 +178,7 @@ const addData = async (data) => {
     });
 };
 
-const deleteData = async (data) => {
+const deleteData = (data) => {
     promptDelete().then((data) => {
         switch (data.delete) {
             case 'Delete Employee':
@@ -194,7 +194,7 @@ const deleteData = async (data) => {
     })
 };
 
-const updateData = async (data) => {
+const updateData = (data) => {
     promptUpdate().then(() => {
         switch (data.update) {
             case 'Update Employee':
