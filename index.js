@@ -88,7 +88,7 @@ const updateChoices = [
     {
         type: 'list',
         message: 'What would you like to delete?',
-        name: 'delete',
+        name: 'update',
         choices: [
             'Update Employee',
             'Update Employee Department',
@@ -116,24 +116,25 @@ const promptAdd = () => inquirer.prompt(addChoices);
 const promptDelete = () => inquirer.prompt(deleteChoices);
 const promptUpdate = () => inquirer.prompt(updateChoices);
 
-const init = () => {
-    promptUser().then((data) => {
-        switch (data.initial) {
-            case 'View':
-                return viewData();
-            case 'Add':
-                return addData();
-            case 'Update':
-                return updateData();
-            case 'Delete':
-                return deleteData();
-            case '[Quit]':
-                return goodByeMsg();
-            default: console.log('default')
-        }
+const init = async () => {
+    const data = await promptUser();
+    switch (data.initial) {
+        case 'View':
+            return viewData();
+        case 'Add':
+            return addData();
+        case 'Update':
+            return updateData();
+        case 'Delete':
+            return deleteData();
+        case '[Quit]':
+            return goodByeMsg();
+        default: console.log('default')
+    }
 
-    });
 };
+
+
 
 
 const viewData = (data) => {
@@ -145,18 +146,70 @@ const viewData = (data) => {
                 return getAllDepartments();
             case 'View All Roles':
                 return getAllRoles();
-            case 'View Employee By Manager':
-                return getEmployeeByManager();
-            case 'View Employee By Department':
-                return getEmployeeByDepartment;
-            case 'View Total Utilized Budget of Department':
-                return getBudget();
+            // case 'View Employee By Manager':
+            //     return getEmployeeByManager();
+            // case 'View Employee By Department':
+            //     return getEmployeeByDepartment();
+            // case 'View Total Utilized Budget of Department':
+            //     return getBudget();
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
         }
 
     })
+};
+
+
+
+const addData = async (data) => {
+    promptAdd().then((data) => {
+        switch (data.add) {
+            case 'Add Employee':
+                return addEmployee();
+            case 'Add Role':
+                return addRole();
+            case 'Add Department':
+                return getDepartment();
+            case '[Quit]':
+                return goodByeMsg();
+            default: goodByeMsg();
+        };
+    });
+};
+
+const deleteData = async (data) => {
+    promptDelete().then((data) => {
+        switch (data.delete) {
+            case 'Delete Employee':
+                return deleteEmployee();
+            case 'Delete Role':
+                return deleteRole();
+            case 'Delete Department':
+                return deleteDepartment();
+            case '[Quit]':
+                return goodByeMsg();
+            default: goodByeMsg();
+        };
+    })
+};
+
+const updateData = async (data) => {
+    promptUpdate().then(() => {
+        switch (data.update) {
+            case 'Update Employee':
+                return updateEmployee();
+            case 'Update Employee Department':
+                return updateDepartment();
+            case 'Update Employee Role':
+                return updateRole();
+            case 'Update Employee Manager':
+                return updateManager();
+            case '[Quit]':
+                return goodByeMsg();
+            default: goodByeMsg();
+        };
+    });
 };
 
 
@@ -170,7 +223,6 @@ const getAllEmployees = () => {
         printTable(rows);
     });
     setTimeout(init, 300);
-
 };
 
 const getAllRoles = () => {
