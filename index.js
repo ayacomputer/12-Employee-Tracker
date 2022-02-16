@@ -181,7 +181,7 @@ const getAllDepartments = () => {
         }
         printTable(rows);
     });
-    init();
+    setTimeout(init, 300);
 };
 
 const getEmployeeByDepartment = () => {
