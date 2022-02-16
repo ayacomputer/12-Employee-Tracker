@@ -1,8 +1,11 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const cTable = require('console.table');
+const { printTable } = require('console-table-printer');
 const figlet = require('figlet');
 const chalk = require('chalk');
+let departmentArray = [];
+let employees = [];
+let roles = [];
 
 
 require('dotenv').config();
@@ -14,8 +17,25 @@ const db = mysql.createConnection(
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
     },
-    console.log(`Connected to the movies_db database.`)
 );
+
+db.connect(function (err) {
+    figlet('Employee Tracker', function (err, data) {
+        if (err) {
+            console.log('Something went wrong...');
+            console.dir(err);
+            return;
+        }
+        console.log(chalk.magenta('\n------------------------------------------------------------------------------------\n'));
+        console.log(chalk.white.bgCyan(data));
+        console.log(chalk.magenta('\n------------------------------------------------------------------------------------\n'));
+        console.log(chalk.magenta('Please answer the following questions:'));
+
+        init();
+    });
+});
+
+
 
 const questions = [
     {
@@ -30,9 +50,10 @@ const viewChoices = [
         type: 'list',
         message: 'What would you like to view?',
         name: 'view',
-        choices: ['View All Employees',
+        choices: [
             'View All Departments',
             'View All Roles',
+            'View All Employees',
             'View Employee By Manager',
             'View Employee By Department',
             'View Total Utilized Budget of Department', '[Quit]']
@@ -77,20 +98,7 @@ const updateChoices = [
 ];
 
 
-const welcomeMsg = () => {
-    figlet('Employee Tracker', function (err, data) {
-        if (err) {
-            console.log('Something went wrong...');
-            console.dir(err);
-            return;
-        }
-        console.log(chalk.white.bgCyan
-            (`\n${data}`));
-    });
-    console.log(chalk.magenta('Please answer the following questions:'));
-};
-
-const goodByeMsg = () => console.log(chalk.green('\n-------SEE YOU--------'))
+const goodByeMsg = () => console.log(chalk.green.bgGreen('\n-------SEE YOU--------'))
 const promptUser = () => inquirer.prompt(questions);
 const promptView = () => inquirer.prompt(viewChoices);
 const promptAdd = () => inquirer.prompt(addChoices);
@@ -98,20 +106,18 @@ const promptDelete = () => inquirer.prompt(deleteChoices);
 const promptUpdate = () => inquirer.prompt(updateChoices);
 
 const init = () => {
-    welcomeMsg();
     promptUser().then((data) => {
-        console.log(data.initial);
         switch (data.initial) {
             case 'View':
-                return viewData(data);
+                return viewData();
             case 'Add':
-                return addData(data);
+                return addData();
             case 'Update':
-                return updateData(data);
+                return updateData();
             case 'Delete':
-                return deleteData(data);
+                return deleteData();
             case '[Quit]':
-                return goodByeMsg(data);
+                return goodByeMsg();
             default: console.log('default')
         }
 
@@ -121,7 +127,6 @@ const init = () => {
 
 const viewData = (data) => {
     promptView().then((data) => {
-        console.log(data.view)
         switch (data.view) {
             case 'View All Employees':
                 return getAllEmployees();
@@ -139,9 +144,10 @@ const viewData = (data) => {
                 return goodByeMsg();
             default: goodByeMsg();
         }
-    }
-    )
+
+    })
 };
+
 
 
 const getAllEmployees = () => {
@@ -150,10 +156,65 @@ const getAllEmployees = () => {
         if (err) {
             return console.error('Something went wrong', err);
         }
-        console.table(rows);
+        printTable(rows);
     });
-
+    init();
 
 };
 
-init();
+const getAllRoles = () => {
+    const sql = `SELECT * FROM role`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        printTable(rows);
+    });
+    init();
+};
+
+const getAllDepartments = () => {
+    const sql = `SELECT * FROM department`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        printTable(rows);
+    });
+    init();
+};
+
+const getEmployeeByDepartment = () => {
+    inquirer.prompt(
+        {
+            type: 'list',
+            message: 'Which department would you like to view?',
+            name: 'department',
+            choice: departmentArray,
+        }
+    )
+        .then((data) => {
+            const sql = `SELECT * FROM employee WHERE department_id=${data}`;
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    return console.error('Something went wrong', err);
+                }
+                printTable(rows);
+            });
+        })
+
+};
+
+const getEmployeeByManager = () => {
+    inquirer.prompt(managerChoice)
+        .then((data) => {
+            const sql = `SELECT * FROM employee WHERE department_id=${data.managerChoice}`;
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    return console.error('Something went wrong', err);
+                }
+                printTable(rows);
+            });
+        })
+
+};
