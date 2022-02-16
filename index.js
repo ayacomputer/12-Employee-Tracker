@@ -22,24 +22,58 @@ const questions = [
         type: 'list',
         message: 'What would you like to do?',
         name: 'initial',
+        choices: ['View', 'Add', 'Update', 'Delete', '[Quit]']
+    }];
+
+const viewChoices = [
+    {
+        type: 'list',
+        message: 'What would you like to view?',
+        name: 'view',
         choices: ['View All Employees',
             'View All Departments',
             'View All Roles',
             'View Employee By Manager',
             'View Employee By Department',
-            'Add Employee',
+            'View Total Utilized Budget of Department', '[Quit]']
+    }
+];
+
+const addChoices = [
+    {
+        type: 'list',
+        message: 'What would you like to add?',
+        name: 'add',
+        choices: ['Add Employee',
             'Add Department',
-            'Add Role',
+            'Add Role', '[Quit]']
+
+    }
+];
+
+const deleteChoices = [
+    {
+        type: 'list',
+        message: 'What would you like to delete?',
+        name: 'delete',
+        choices: ['Delete Employee',
+            'Delete Department',
+            'Delete Role', '[Quit]']
+
+    }
+];
+
+const updateChoices = [
+    {
+        type: 'list',
+        message: 'What would you like to delete?',
+        name: 'delete',
+        choices: [
             'Update Employee',
             'Update Employee Department',
             'Update Employee Role',
-            'Update Employee Manager',
-            'Delete Department',
-            'Delete Role',
-            'Delete Employee',
-            'View Total Utilized Budget of Department',
-            '[Quit]'],
-    },
+            'Update Employee Manager', '[Quit]']
+    }
 ];
 
 
@@ -56,15 +90,39 @@ const welcomeMsg = () => {
     console.log(chalk.magenta('Please answer the following questions:'));
 };
 
-
+const goodByeMsg = () => console.log(chalk.green('\n-------SEE YOU--------'))
 const promptUser = () => inquirer.prompt(questions);
-
+const promptView = () => inquirer.prompt(viewChoices);
+const promptAdd = () => inquirer.prompt(addChoices);
+const promptDelete = () => inquirer.prompt(deleteChoices);
+const promptUpdate = () => inquirer.prompt(updateChoices);
 
 const init = () => {
     welcomeMsg();
     promptUser().then((data) => {
         console.log(data.initial);
         switch (data.initial) {
+            case 'View':
+                return viewData(data);
+            case 'Add':
+                return addData(data);
+            case 'Update':
+                return updateData(data);
+            case 'Delete':
+                return deleteData(data);
+            case '[Quit]':
+                return goodByeMsg(data);
+            default: console.log('default')
+        }
+
+    });
+};
+
+
+const viewData = (data) => {
+    promptView().then((data) => {
+        console.log(data.view)
+        switch (data.view) {
             case 'View All Employees':
                 return getAllEmployees();
             case 'View All Departments':
@@ -74,40 +132,20 @@ const init = () => {
             case 'View Employee By Manager':
                 return getEmployeeByManager();
             case 'View Employee By Department':
-                return getEmployeeByDepartment();
+                return getEmployeeByDepartment;
             case 'View Total Utilized Budget of Department':
                 return getBudget();
-            case 'Add Employee':
-                return addEmployee();
-            case 'Add Department':
-                return addDepartment();
-            case 'Add Role':
-                return addRole();
-            case 'Update Employee':
-                return updateEmployee();
-            case 'Update Employee Department':
-                return updateEmployeeDepartment();
-            case 'Update Employee Role':
-                return updateEmployeeRole();
-            case 'Update Employee Manager':
-                return updateEmployeeManager();
-            case 'Delete Department':
-                return deleteDepartment();
-            case 'Delete Employee':
-                return deleteEmployee();
-            case 'Delete Employee':
-                return deleteEmployee();
-            default: console.log('default')
+            case '[Quit]':
+                return goodByeMsg();
+            default: goodByeMsg();
         }
-
-    });
+    }
+    )
 };
-
 
 
 const getAllEmployees = () => {
     const sql = `SELECT * FROM employee`;
-
     db.query(sql, (err, rows) => {
         if (err) {
             return console.error('Something went wrong', err);
