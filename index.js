@@ -31,7 +31,7 @@ db.connect(function (err) {
         console.log(chalk.magenta('\n------------------------------------------------------------------------------------\n'));
         console.log(chalk.magenta('Please answer the following questions:'));
 
-        init();
+        setTimeout(init, 300);
     });
 });
 
@@ -98,7 +98,18 @@ const updateChoices = [
 ];
 
 
-const goodByeMsg = () => console.log(chalk.green.bgGreen('\n-------SEE YOU--------'))
+const goodByeMsg = () => figlet('See you !', function (err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(chalk.magenta('\n----------------------------------------\n'));
+    console.log(chalk.white.bgGreen(data));
+    console.log(chalk.magenta('\n----------------------------------------\n'));
+});
+
+
 const promptUser = () => inquirer.prompt(questions);
 const promptView = () => inquirer.prompt(viewChoices);
 const promptAdd = () => inquirer.prompt(addChoices);
@@ -158,7 +169,7 @@ const getAllEmployees = () => {
         }
         printTable(rows);
     });
-    init();
+    setTimeout(init, 300);
 
 };
 
@@ -170,7 +181,7 @@ const getAllRoles = () => {
         }
         printTable(rows);
     });
-    init();
+    setTimeout(init, 300);
 };
 
 const getAllDepartments = () => {
@@ -184,37 +195,43 @@ const getAllDepartments = () => {
     setTimeout(init, 300);
 };
 
-const getEmployeeByDepartment = () => {
-    inquirer.prompt(
-        {
-            type: 'list',
-            message: 'Which department would you like to view?',
-            name: 'department',
-            choice: departmentArray,
-        }
-    )
-        .then((data) => {
-            const sql = `SELECT * FROM employee WHERE department_id=${data}`;
-            db.query(sql, (err, rows) => {
-                if (err) {
-                    return console.error('Something went wrong', err);
-                }
-                printTable(rows);
-            });
-        })
+// const getEmployeeByDepartment = () => {
+//     inquirer.prompt(
+//         {
+//             type: 'list',
+//             message: 'Which department would you like to view?',
+//             name: 'department',
+//             choice: departmentArray,
+//         }
+//     )
+//         .then((data) => {
+//             const sql = `
+//             SELECT department.name, department.id, employee.first_name, role.name, role.id
+//             FROM employee
+//             LEFT JOIN employee ON employee.role_id = role.id
+//             LEFT JOIN department ON role.department_id = department.id
+//             WHERE department.id = ${data.department};
+//             `;
+//             db.query(sql, (err, rows) => {
+//                 if (err) {
+//                     return console.error('Something went wrong', err);
+//                 }
+//                 printTable(rows);
+//             });
+//         })
 
-};
+// };
 
-const getEmployeeByManager = () => {
-    inquirer.prompt(managerChoice)
-        .then((data) => {
-            const sql = `SELECT * FROM employee WHERE department_id=${data.managerChoice}`;
-            db.query(sql, (err, rows) => {
-                if (err) {
-                    return console.error('Something went wrong', err);
-                }
-                printTable(rows);
-            });
-        })
+// const getEmployeeByManager = () => {
+//     inquirer.prompt(managerChoice)
+//         .then((data) => {
+//             const sql = `SELECT * FROM employee WHERE department_id=${data.managerChoice}`;
+//             db.query(sql, (err, rows) => {
+//                 if (err) {
+//                     return console.error('Something went wrong', err);
+//                 }
+//                 printTable(rows);
+//             });
+//         })
 
-};
+// };
