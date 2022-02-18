@@ -51,14 +51,15 @@ const viewChoices = [
         message: 'What would you like to view?',
         name: 'view',
         choices: [
-            'View All Departments',
-            'View All Roles',
-            'View All Employees',
-            'View Employee By Manager',
-            'View Employee By Department',
-            'View Total Utilized Budget of Department', '[Quit]']
-    }
-];
+            { value: 'department', name: "View All Departments" },
+            { value: 'role', name: "View All Roles" },
+            { value: 'employee', name: "View All Employees" },
+            { value: 'employeeByManager', name: "View Employee By Manager" },
+            { value: 'employeeByDepartment', name: "View Employee By Department" },
+            { value: 'budget', name: "View Total Utilized Budget of Department" },
+            '[Quit]'
+        ],
+    }];
 
 const addChoices = [
     {
@@ -137,15 +138,16 @@ const init = async () => {
 
 
 
-const viewData = (data) => {
+const viewData = () => {
     promptView().then((data) => {
+        console.log(data.view)
         switch (data.view) {
-            case 'View All Employees':
-                return getAllEmployees();
-            case 'View All Departments':
-                return getAllDepartments();
-            case 'View All Roles':
-                return getAllRoles();
+            case 'employee':
+                return getAll(data.view);
+            case 'department':
+                return getAll(data.view);
+            case 'role':
+                return getAll(data.view);
             // case 'View Employee By Manager':
             //     return getEmployeeByManager();
             // case 'View Employee By Department':
@@ -212,10 +214,10 @@ const updateData = (data) => {
     });
 };
 
-
-
-const getAllEmployees = () => {
-    const sql = `SELECT * FROM employee`;
+const getAll = (data) => {
+    const sql = `SELECT * FROM ${data}`;
+    console.log('getAll working data:', data);
+    console.log('getAll working', data);
     db.query(sql, (err, rows) => {
         if (err) {
             return console.error('Something went wrong', err);
@@ -223,29 +225,7 @@ const getAllEmployees = () => {
         printTable(rows);
     });
     setTimeout(init, 300);
-};
-
-const getAllRoles = () => {
-    const sql = `SELECT * FROM role`;
-    db.query(sql, (err, rows) => {
-        if (err) {
-            return console.error('Something went wrong', err);
-        }
-        printTable(rows);
-    });
-    setTimeout(init, 300);
-};
-
-const getAllDepartments = () => {
-    const sql = `SELECT * FROM department`;
-    db.query(sql, (err, rows) => {
-        if (err) {
-            return console.error('Something went wrong', err);
-        }
-        printTable(rows);
-    });
-    setTimeout(init, 300);
-};
+}
 
 // const getEmployeeByDepartment = () => {
 //     inquirer.prompt(
