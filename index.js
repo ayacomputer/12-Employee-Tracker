@@ -122,6 +122,33 @@ const addEmployeeChoices = [
     }
 ]
 
+const addRoleChoices = [
+    {
+        type: 'input',
+        message: `Enter the title of the role`,
+        name: `title`,
+    },
+    {
+        type: 'input',
+        message: `Enter the salary of the role`,
+        name: `salary`,
+    },
+    {
+        type: 'input',
+        message: `Enter the department_id`,
+        name: `department_id`,
+    }
+]
+
+
+const addDepartmentChoices = [
+    {
+        type: 'input',
+        message: `Enter a name of the new department`,
+        name: `name`,
+    }
+]
+
 
 const goodByeMsg = () => figlet('See you !', function (err, data) {
     if (err) {
@@ -141,6 +168,8 @@ const promptAdd = () => inquirer.prompt(addChoices);
 const promptDelete = () => inquirer.prompt(deleteChoices);
 const promptUpdate = () => inquirer.prompt(updateChoices);
 const promptAddEmployee = () => inquirer.prompt(addEmployeeChoices)
+const promptAddRole = () => inquirer.prompt(addRoleChoices);
+const promptAddDepartment = () => inquirer.prompt(addDepartmentChoices);
 
 const init = async () => {
     const data = await promptUser();
@@ -253,7 +282,7 @@ const getAll = (data) => {
 }
 
 const viewAllInfo = () => {
-    const sql = `source db/schema.sql;
+    const sql = `
     DROP TABLE IF EXISTS allInfo;
     CREATE TABLE allInfo AS SELECT employee.id AS id, CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', department.name AS 'department', role.title AS 'role', role.salary AS 'salary', manager_id AS manager_id FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id;
     SELECT * FROM allInfo`;
@@ -284,7 +313,38 @@ const addEmployee = (data) => {
 
 }
 
+const addRole = () => {
+    promptAddRole().then((data) => {
+        const sql = `INSERT INTO role (title, salary, department_id)
+        VALUES("${data.title}","${data.salary}",${data.department_id});`;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The role successfully added')
 
+        });
+        setTimeout(init, 300);
+
+    })
+};
+
+
+const addDepartment = () => {
+    promptAddDepartment().then((data) => {
+        const sql = `INSERT INTO department (name)
+        VALUES("${data.name}");`;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The department successfully added')
+
+        });
+        setTimeout(init, 300);
+
+    })
+};
 
 
 
