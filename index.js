@@ -51,6 +51,7 @@ const viewChoices = [
         message: 'What would you like to view?',
         name: 'view',
         choices: [
+            { value: 'all', name: "View All Information" },
             { value: 'department', name: "View All Departments" },
             { value: 'role', name: "View All Roles" },
             { value: 'employee', name: "View All Employees" },
@@ -166,6 +167,8 @@ const viewData = () => {
     promptView().then((data) => {
         console.log(data.view)
         switch (data.view) {
+            case 'all':
+                return viewAllInfo();
             case 'employee':
                 return getAll(data.view);
             case 'department':
@@ -249,21 +252,35 @@ const getAll = (data) => {
     setTimeout(init, 300);
 }
 
-const addEmployee = () => {
+const viewAllInfo = () => {
+    const sql = `source db/schema.sql;
+    DROP TABLE IF EXISTS allInfo;
+    CREATE TABLE allInfo AS SELECT employee.id AS id, CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', department.name AS 'department', role.title AS 'role', role.salary AS 'salary', manager_id AS manager_id FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id;
+    SELECT * FROM allInfo`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        printTable(rows);
+    });
+    setTimeout(init, 300);
+}
+
+const addEmployee = (data) => {
     promptAddEmployee().then((data) => {
-        console.log(data);
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
         VALUES("${data.first_name}","${data.last_name}",${data.role_id},${data.manager_id});`;
-        console.log(sql);
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
             }
-            printTable(rows);
+            console.log('The employee successfully added')
+
         });
         setTimeout(init, 300);
 
     })
+
 
 }
 
