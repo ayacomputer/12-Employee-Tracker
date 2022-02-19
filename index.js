@@ -98,6 +98,29 @@ const updateChoices = [
     }
 ];
 
+const addEmployeeChoices = [
+    {
+        type: 'input',
+        message: `Enter the first name of new employee`,
+        name: `first_name`,
+    },
+    {
+        type: 'input',
+        message: `Enter the last name of new employee`,
+        name: `last_name`,
+    },
+    {
+        type: 'input',
+        message: `Enter the role id of new employee`,
+        name: `role_id`,
+    },
+    {
+        type: 'input',
+        message: `Enter the manager id of new employee`,
+        name: `manager_id`,
+    }
+]
+
 
 const goodByeMsg = () => figlet('See you !', function (err, data) {
     if (err) {
@@ -116,6 +139,7 @@ const promptView = () => inquirer.prompt(viewChoices);
 const promptAdd = () => inquirer.prompt(addChoices);
 const promptDelete = () => inquirer.prompt(deleteChoices);
 const promptUpdate = () => inquirer.prompt(updateChoices);
+const promptAddEmployee = () => inquirer.prompt(addEmployeeChoices)
 
 const init = async () => {
     const data = await promptUser();
@@ -168,7 +192,7 @@ const addData = (data) => {
     promptAdd().then((data) => {
         switch (data.add) {
             case 'Add Employee':
-                return addEmployee();
+                return addEmployee(data);
             case 'Add Role':
                 return addRole();
             case 'Add Department':
@@ -197,7 +221,7 @@ const deleteData = (data) => {
 };
 
 const updateData = (data) => {
-    promptUpdate().then(() => {
+    promptUpdate().then((data) => {
         switch (data.update) {
             case 'Update Employee':
                 return updateEmployee(data.update);
@@ -225,22 +249,22 @@ const getAll = (data) => {
     setTimeout(init, 300);
 }
 
-const addSpecificData = async (data) => {
-    const newData = inquirer.prompt(
-        {
-            type: 'input',
-            message: `Enter the name of new ${data}`,
-            name: `${data}`,
-        }
-    )
-    const sql = `INSERT INTO ${newData} into ${data}`;
-    db.query(sql, (err, rows) => {
-        if (err) {
-            return console.error('Something went wrong', err);
-        }
-        printTable(rows);
-    });
-    setTimeout(init, 300);
+const addEmployee = () => {
+    promptAddEmployee().then((data) => {
+        console.log(data);
+        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES("${data.first_name}","${data.last_name}",${data.role_id},${data.manager_id});`;
+        console.log(sql);
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            printTable(rows);
+        });
+        setTimeout(init, 300);
+
+    })
+
 }
 
 
