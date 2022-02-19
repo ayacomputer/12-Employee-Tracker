@@ -179,6 +179,78 @@ const deleteDepartmentChoices = [
 ]
 
 
+const updateEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the employee id of the employee you wish to update:",
+        name: "id"
+    },
+    {
+        type: "list",
+        message: "What would you like to update?",
+        name: "choices",
+        choices: ["name", "role_id", "manager_id"]
+    }
+
+]
+
+const updateNameOfEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the first name of the employee you wish to update:",
+        name: "first_name"
+    },
+    {
+        type: "input",
+        message: "Enter the last name of the employee you wish to update:",
+        name: "last_name"
+    }
+]
+
+const updateRoleOfEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the new role id of the employee you wish to update:",
+        name: "new_role"
+    }
+]
+
+const updateManagerOfEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the new manager id of the employee you wish to update:",
+        name: "new_manager"
+    }
+]
+
+const updateRoleChoices = [
+    {
+        type: "input",
+        message: "Enter the role title you wish to update:",
+        name: "title"
+    },
+    {
+        type: "input",
+        message: "Enter new title for the role:",
+        name: "new_title"
+    }
+]
+
+const updateDepartmentChoices = [
+    {
+        type: "input",
+        message: "Enter the department id you wish to update:",
+        name: "id"
+    },
+    {
+        type: "input",
+        message: "Enter new name for the department:",
+        name: "name"
+    }
+]
+
+
+
 const goodByeMsg = () => figlet('See you !', function (err, data) {
     if (err) {
         console.log('Something went wrong...');
@@ -202,6 +274,9 @@ const promptAddDepartment = () => inquirer.prompt(addDepartmentChoices);
 const promptDeleteEmployee = () => inquirer.prompt(deleteEmployeeChoices);
 const promptDeleteRole = () => inquirer.prompt(deleteRoleChoices);
 const promptDeleteDepartment = () => inquirer.prompt(deleteDepartmentChoices);
+const updateEmployee = () => inquirer.prompt(updateEmployeeChoices);
+const updateDepartment = () => inquirer.prompt(updateDepartmentChoices);
+const updateRole = () => inquirer.prompt(updateRoleChoices);
 
 const init = async () => {
     const data = await promptUser();
