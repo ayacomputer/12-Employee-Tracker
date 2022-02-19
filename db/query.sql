@@ -1,4 +1,6 @@
 USE employees_db;
+DROP TABLE IF EXISTS allInfo;
+
 CREATE TABLE allInfo AS(
     SELECT employee.id AS id, 
     CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', 
