@@ -4,8 +4,8 @@ const { printTable } = require('console-table-printer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 let departmentArray = [];
-let employees = [];
-let roles = [];
+let employeeArray = [];
+let roleArray = [];
 
 
 require('dotenv').config();
@@ -149,6 +149,35 @@ const addDepartmentChoices = [
     }
 ]
 
+const deleteEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the first name of the employee you wish to delete:",
+        name: "first_name"
+    },
+    {
+        type: "input",
+        message: "Enter the last name of the employee you wish to delete:",
+        name: "last_name",
+    }
+]
+
+const deleteRoleChoices = [
+    {
+        type: "input",
+        message: "Enter the title name of the role you wish to delete:",
+        name: "title"
+    }
+]
+
+const deleteDepartmentChoices = [
+    {
+        type: "input",
+        message: "Enter the name of the department you wish to delete:",
+        name: "name"
+    }
+]
+
 
 const goodByeMsg = () => figlet('See you !', function (err, data) {
     if (err) {
@@ -170,6 +199,9 @@ const promptUpdate = () => inquirer.prompt(updateChoices);
 const promptAddEmployee = () => inquirer.prompt(addEmployeeChoices)
 const promptAddRole = () => inquirer.prompt(addRoleChoices);
 const promptAddDepartment = () => inquirer.prompt(addDepartmentChoices);
+const promptDeleteEmployee = () => inquirer.prompt(deleteEmployeeChoices);
+const promptDeleteRole = () => inquirer.prompt(deleteRoleChoices);
+const promptDeleteDepartment = () => inquirer.prompt(deleteDepartmentChoices);
 
 const init = async () => {
     const data = await promptUser();
@@ -224,7 +256,7 @@ const addData = (data) => {
     promptAdd().then((data) => {
         switch (data.add) {
             case 'Add Employee':
-                return addEmployee(data);
+                return addEmployee();
             case 'Add Role':
                 return addRole();
             case 'Add Department':
@@ -240,11 +272,11 @@ const deleteData = (data) => {
     promptDelete().then((data) => {
         switch (data.delete) {
             case 'Delete Employee':
-                return deleteSpecificData(data.delete);
+                return deleteEmployee(data.delete);
             case 'Delete Role':
-                return deleteSpecificData(data.delete);
+                return deleteRole(data.delete);
             case 'Delete Department':
-                return deleteSpecificData(data.delete);
+                return deleteDepartment(data.delete);
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
@@ -297,6 +329,7 @@ const viewAllInfo = () => {
 
 const addEmployee = (data) => {
     promptAddEmployee().then((data) => {
+        employeeArray.push(data);
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
         VALUES("${data.first_name}","${data.last_name}",${data.role_id},${data.manager_id});`;
         db.query(sql, (err, rows) => {
@@ -315,6 +348,7 @@ const addEmployee = (data) => {
 
 const addRole = () => {
     promptAddRole().then((data) => {
+        roleArray.push(data);
         const sql = `INSERT INTO role (title, salary, department_id)
         VALUES("${data.title}","${data.salary}",${data.department_id});`;
         db.query(sql, (err, rows) => {
@@ -332,6 +366,7 @@ const addRole = () => {
 
 const addDepartment = () => {
     promptAddDepartment().then((data) => {
+        departmentArray.push(data);
         const sql = `INSERT INTO department (name)
         VALUES("${data.name}");`;
         db.query(sql, (err, rows) => {
@@ -346,6 +381,48 @@ const addDepartment = () => {
     })
 };
 
+
+const deleteEmployee = () => {
+    promptDeleteEmployee().then((data) => {
+        const sql = `DELETE FROM employee WHERE first_name = "${data.first_name}" and last_name = "${data.last_name}";`
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The employee has been deleted.')
+
+        });
+        setTimeout(init, 300);
+    })
+}
+
+const deleteRole = () => {
+    promptDeleteRole().then((data) => {
+        const sql = `DELETE FROM role WHERE title = "${data.title}";`
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The role has been deleted.')
+
+        });
+        setTimeout(init, 300);
+    })
+}
+
+const deleteDepartment = () => {
+    promptDeleteDepartment().then((data) => {
+        const sql = `DELETE FROM department WHERE name = "${data.name}";`
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The department has been deleted.')
+
+        });
+        setTimeout(init, 300);
+    })
+}
 
 
 // const getEmployeeByDepartment = () => {
