@@ -15,10 +15,10 @@ VALUES ("role A", 100,1),
 
        
 
-INSERT INTO employee (first_name, last_name,role_id)
-VALUES ("Elliot", "Smith",1),
-       ("Amira", "Afzal",2),
-       ("Christoper", "Lee",3),
-       ("Verónica", "Rodriguez",4),
-       ("Igor", "Stein",5);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Elliot", "Smith",1,2),
+       ("Amira", "Afzal",2,3),
+       ("Christoper", "Lee",3,4),
+       ("Verónica", "Rodriguez",4,5),
+       ("Igor", "Stein",5,6);
        

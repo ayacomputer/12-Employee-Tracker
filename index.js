@@ -172,7 +172,7 @@ const addData = (data) => {
             case 'Add Role':
                 return addRole();
             case 'Add Department':
-                return getDepartment();
+                return addDepartment();
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
@@ -184,11 +184,11 @@ const deleteData = (data) => {
     promptDelete().then((data) => {
         switch (data.delete) {
             case 'Delete Employee':
-                return deleteEmployee();
+                return deleteSpecificData(data.delete);
             case 'Delete Role':
-                return deleteRole();
+                return deleteSpecificData(data.delete);
             case 'Delete Department':
-                return deleteDepartment();
+                return deleteSpecificData(data.delete);
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
@@ -200,13 +200,13 @@ const updateData = (data) => {
     promptUpdate().then(() => {
         switch (data.update) {
             case 'Update Employee':
-                return updateEmployee();
+                return updateEmployee(data.update);
             case 'Update Employee Department':
-                return updateDepartment();
+                return updateSpecificData(data.update);
             case 'Update Employee Role':
-                return updateRole();
+                return updateSpecificData(data.update);
             case 'Update Employee Manager':
-                return updateManager();
+                return updateSpecificData(data.update);
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
@@ -216,8 +216,6 @@ const updateData = (data) => {
 
 const getAll = (data) => {
     const sql = `SELECT * FROM ${data}`;
-    console.log('getAll working data:', data);
-    console.log('getAll working', data);
     db.query(sql, (err, rows) => {
         if (err) {
             return console.error('Something went wrong', err);
@@ -226,6 +224,28 @@ const getAll = (data) => {
     });
     setTimeout(init, 300);
 }
+
+const addSpecificData = async (data) => {
+    const newData = inquirer.prompt(
+        {
+            type: 'input',
+            message: `Enter the name of new ${data}`,
+            name: `${data}`,
+        }
+    )
+    const sql = `INSERT INTO ${newData} into ${data}`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        printTable(rows);
+    });
+    setTimeout(init, 300);
+}
+
+
+
+
 
 // const getEmployeeByDepartment = () => {
 //     inquirer.prompt(
