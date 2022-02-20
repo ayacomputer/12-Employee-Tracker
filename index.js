@@ -181,11 +181,6 @@ const deleteDepartmentChoices = [
 
 const updateEmployeeChoices = [
     {
-        type: "input",
-        message: "Enter the employee id of the employee you wish to update:",
-        name: "id"
-    },
-    {
         type: "list",
         message: "What would you like to update?",
         name: "choices",
@@ -197,17 +192,27 @@ const updateEmployeeChoices = [
 const updateNameOfEmployeeChoices = [
     {
         type: "input",
-        message: "Enter the first name of the employee you wish to update:",
+        message: "Enter the employee id of the employee you wish to update:",
+        name: "id"
+    },
+    {
+        type: "input",
+        message: "Update the first name:",
         name: "first_name"
     },
     {
         type: "input",
-        message: "Enter the last name of the employee you wish to update:",
+        message: "Update the last name:",
         name: "last_name"
     }
 ]
 
-const updateRoleOfEmployeeChoices = [
+const updateRoleIdOfEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the employee id of the employee you wish to update:",
+        name: "id"
+    },
     {
         type: "input",
         message: "Enter the new role id of the employee you wish to update:",
@@ -272,11 +277,15 @@ const promptAddEmployee = () => inquirer.prompt(addEmployeeChoices)
 const promptAddRole = () => inquirer.prompt(addRoleChoices);
 const promptAddDepartment = () => inquirer.prompt(addDepartmentChoices);
 const promptDeleteEmployee = () => inquirer.prompt(deleteEmployeeChoices);
-const promptDeleteRole = () => inquirer.prompt(deleteRoleChoices);
+const promptDeleteRole = () => inquirer.prompt(deleteRoleChoices)
 const promptDeleteDepartment = () => inquirer.prompt(deleteDepartmentChoices);
-const updateEmployee = () => inquirer.prompt(updateEmployeeChoices);
-const updateDepartment = () => inquirer.prompt(updateDepartmentChoices);
-const updateRole = () => inquirer.prompt(updateRoleChoices);
+const promptUpdateEmployee = () => inquirer.prompt(updateEmployeeChoices);
+const promptUpdateRoleIdOfEmployee = () => inquirer.prompt(updateRoleIdOfEmployeeChoices);
+const promptUpdateNameOfEmployee = () => inquirer.prompt(updateNameOfEmployeeChoices);
+const promptUpdateDepartment = () => inquirer.prompt(updateDepartmentChoices);
+const promptUpdateRole = () => inquirer.prompt(updateRoleChoices);
+const promptUpdateManager = () => inquirer.prompt(updateManagerChoices);
+
 
 const init = async () => {
     const data = await promptUser();
@@ -295,10 +304,6 @@ const init = async () => {
     }
 
 };
-
-
-
-
 const viewData = () => {
     promptView().then((data) => {
         console.log(data.view)
@@ -324,9 +329,6 @@ const viewData = () => {
 
     })
 };
-
-
-
 const addData = (data) => {
     promptAdd().then((data) => {
         switch (data.add) {
@@ -342,7 +344,6 @@ const addData = (data) => {
         };
     });
 };
-
 const deleteData = (data) => {
     promptDelete().then((data) => {
         switch (data.delete) {
@@ -358,25 +359,23 @@ const deleteData = (data) => {
         };
     })
 };
-
 const updateData = (data) => {
     promptUpdate().then((data) => {
         switch (data.update) {
             case 'Update Employee':
                 return updateEmployee(data.update);
             case 'Update Employee Department':
-                return updateSpecificData(data.update);
+                return updateDepartment(data.update);
             case 'Update Employee Role':
-                return updateSpecificData(data.update);
+                return updateRole(data.update);
             case 'Update Employee Manager':
-                return updateSpecificData(data.update);
+                return updateEmployeeManager(data.update);
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
         };
     });
 };
-
 const getAll = (data) => {
     const sql = `SELECT * FROM ${data}`;
     db.query(sql, (err, rows) => {
@@ -387,12 +386,19 @@ const getAll = (data) => {
     });
     setTimeout(init, 300);
 }
-
 const viewAllInfo = () => {
     const sql = `
-    DROP TABLE IF EXISTS allInfo;
-    CREATE TABLE allInfo AS SELECT employee.id AS id, CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', department.name AS 'department', role.title AS 'role', role.salary AS 'salary', manager_id AS manager_id FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id;
-    SELECT * FROM allInfo`;
+    DROP TABLE IF EXISTS allinfo;
+CREATE TABLE allinfo AS
+SELECT employee.id AS id, 
+    CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', 
+    department.name AS 'department', 
+    role.title AS 'role', 
+    role.salary AS 'salary', 
+    manager_id AS manager_id
+FROM employee
+JOIN role ON employee.role_id = role.id
+JOIN department ON role.department_id = department.id;`
     db.query(sql, (err, rows) => {
         if (err) {
             return console.error('Something went wrong', err);
@@ -401,12 +407,11 @@ const viewAllInfo = () => {
     });
     setTimeout(init, 300);
 }
-
 const addEmployee = (data) => {
     promptAddEmployee().then((data) => {
         employeeArray.push(data);
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-        VALUES("${data.first_name}","${data.last_name}",${data.role_id},${data.manager_id});`;
+    VALUES("${data.first_name}", "${data.last_name}", ${data.role_id}, ${data.manager_id}); `;
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -420,12 +425,11 @@ const addEmployee = (data) => {
 
 
 }
-
 const addRole = () => {
     promptAddRole().then((data) => {
         roleArray.push(data);
-        const sql = `INSERT INTO role (title, salary, department_id)
-        VALUES("${data.title}","${data.salary}",${data.department_id});`;
+        const sql = `INSERT INTO role(title, salary, department_id)
+    VALUES("${data.title}", "${data.salary}", ${data.department_id}); `;
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -437,13 +441,11 @@ const addRole = () => {
 
     })
 };
-
-
 const addDepartment = () => {
     promptAddDepartment().then((data) => {
         departmentArray.push(data);
-        const sql = `INSERT INTO department (name)
-        VALUES("${data.name}");`;
+        const sql = `INSERT INTO department(name)
+    VALUES("${data.name}"); `;
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -455,11 +457,9 @@ const addDepartment = () => {
 
     })
 };
-
-
 const deleteEmployee = () => {
     promptDeleteEmployee().then((data) => {
-        const sql = `DELETE FROM employee WHERE first_name = "${data.first_name}" and last_name = "${data.last_name}";`
+        const sql = `DELETE FROM employee WHERE first_name = "${data.first_name}" and last_name = "${data.last_name}"; `
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -470,10 +470,9 @@ const deleteEmployee = () => {
         setTimeout(init, 300);
     })
 }
-
 const deleteRole = () => {
     promptDeleteRole().then((data) => {
-        const sql = `DELETE FROM role WHERE title = "${data.title}";`
+        const sql = `DELETE FROM role WHERE title = "${data.title}"; `
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -484,10 +483,9 @@ const deleteRole = () => {
         setTimeout(init, 300);
     })
 }
-
 const deleteDepartment = () => {
     promptDeleteDepartment().then((data) => {
-        const sql = `DELETE FROM department WHERE name = "${data.name}";`
+        const sql = `DELETE FROM department WHERE name = "${data.name}"; `
         db.query(sql, (err, rows) => {
             if (err) {
                 return console.error('Something went wrong', err);
@@ -497,6 +495,52 @@ const deleteDepartment = () => {
         });
         setTimeout(init, 300);
     })
+}
+const updateEmployee = async () => {
+    const data = await promptUpdateEmployee();
+    switch (data.choices) {
+        case 'name':
+            return updateNameOfEmployee();
+        case 'role_id':
+            return updateRoleIdOfEmployee();
+        case 'department_id':
+            return updateDepartmentIdOfEmployee();
+        case '[Quit]':
+            return goodByeMsg();
+        default: console.log('default');
+    };
+    ;
+}
+
+const updateNameOfEmployee = () => {
+    promptUpdateNameOfEmployee().then((data) => {
+        const sql = `UPDATE employee SET first_name = "${data.first_name}", last_name = "${data.last_name}" WHERE id = "${data.id}"; `;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The employee name successfully updated')
+
+        });
+        setTimeout(init, 300);
+    }
+    )
+}
+
+
+const updateRoleIdOfEmployee = () => {
+    promptUpdateRoleIdOfEmployee().then((data) => {
+        const sql = `UPDATE employee SET role_id = "${data.new_role}" WHERE id = "${data.id}"; `;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The role id has been successfully updated');
+
+        });
+        setTimeout(init, 300);
+    }
+    )
 }
 
 
