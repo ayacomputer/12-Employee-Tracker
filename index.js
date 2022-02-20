@@ -89,13 +89,13 @@ const deleteChoices = [
 const updateChoices = [
     {
         type: 'list',
-        message: 'What would you like to delete?',
+        message: 'What would you like to update?',
         name: 'update',
         choices: [
             'Update Employee',
-            'Update Employee Department',
-            'Update Employee Role',
-            'Update Employee Manager', '[Quit]']
+            'Update Department',
+            'Update Role',
+            'Update Manager', '[Quit]']
     }
 ];
 
@@ -219,8 +219,12 @@ const updateRoleIdOfEmployeeChoices = [
         name: "new_role"
     }
 ]
-
-const updateManagerOfEmployeeChoices = [
+const updateManagerIdOfEmployeeChoices = [
+    {
+        type: "input",
+        message: "Enter the employee id of the employee you wish to update:",
+        name: "id"
+    },
     {
         type: "input",
         message: "Enter the new manager id of the employee you wish to update:",
@@ -282,6 +286,7 @@ const promptDeleteDepartment = () => inquirer.prompt(deleteDepartmentChoices);
 const promptUpdateEmployee = () => inquirer.prompt(updateEmployeeChoices);
 const promptUpdateRoleIdOfEmployee = () => inquirer.prompt(updateRoleIdOfEmployeeChoices);
 const promptUpdateNameOfEmployee = () => inquirer.prompt(updateNameOfEmployeeChoices);
+const promptUpdateManagerIdOfEmployee = () => inquirer.prompt(updateManagerIdOfEmployeeChoices);
 const promptUpdateDepartment = () => inquirer.prompt(updateDepartmentChoices);
 const promptUpdateRole = () => inquirer.prompt(updateRoleChoices);
 const promptUpdateManager = () => inquirer.prompt(updateManagerChoices);
@@ -364,11 +369,11 @@ const updateData = (data) => {
         switch (data.update) {
             case 'Update Employee':
                 return updateEmployee(data.update);
-            case 'Update Employee Department':
+            case 'Update Department':
                 return updateDepartment(data.update);
-            case 'Update Employee Role':
+            case 'Update Role':
                 return updateRole(data.update);
-            case 'Update Employee Manager':
+            case 'Update Manager':
                 return updateEmployeeManager(data.update);
             case '[Quit]':
                 return goodByeMsg();
@@ -503,8 +508,8 @@ const updateEmployee = async () => {
             return updateNameOfEmployee();
         case 'role_id':
             return updateRoleIdOfEmployee();
-        case 'department_id':
-            return updateDepartmentIdOfEmployee();
+        case 'manager_id':
+            return updateManagerIdOfEmployee();
         case '[Quit]':
             return goodByeMsg();
         default: console.log('default');
@@ -542,8 +547,20 @@ const updateRoleIdOfEmployee = () => {
     }
     )
 }
+const updateManagerIdOfEmployee = () => {
+    promptUpdateManagerIdOfEmployee().then((data) => {
+        const sql = `UPDATE employee SET manager_id = "${data.new_manager}" WHERE id = "${data.id}"; `;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The manager id has been successfully updated');
 
-
+        });
+        setTimeout(init, 300);
+    }
+    )
+}
 // const getEmployeeByDepartment = () => {
 //     inquirer.prompt(
 //         {
