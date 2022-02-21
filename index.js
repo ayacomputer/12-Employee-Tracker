@@ -36,13 +36,20 @@ db.connect(function (err) {
 });
 
 
+const validate = {
+    input: input => input !== '' ? true : "Please select a choice",
+    name: input => input !== '' ? true : "Please enter a name.",
+    id: input => Number.isInteger(Number(input)) && Number(input) > 0 ? true : "Please enter a positive number.",
+}
+
 
 const questions = [
     {
         type: 'list',
         message: 'What would you like to do?',
         name: 'initial',
-        choices: ['View', 'Add', 'Update', 'Delete', '[Quit]']
+        choices: ['View', 'Add', 'Update', 'Delete', '[Quit]'],
+        validate: validate.input
 
     }];
 
@@ -61,6 +68,7 @@ const viewChoices = [
             { value: 'budget', name: "View Total Utilized Budget of Department" },
             '[Quit]'
         ],
+        validate: validate.input
     }];
 
 const addChoices = [
@@ -70,9 +78,11 @@ const addChoices = [
         name: 'add',
         choices: ['Add Employee',
             'Add Department',
-            'Add Role', '[Quit]']
+            'Add Role', '[Quit]'],
+        validate: validate.input
 
     }
+
 ];
 
 const deleteChoices = [
@@ -82,9 +92,11 @@ const deleteChoices = [
         name: 'delete',
         choices: ['Delete Employee',
             'Delete Department',
-            'Delete Role', '[Quit]']
+            'Delete Role', '[Quit]'],
+        validate: validate.input
 
     }
+
 ];
 
 const updateChoices = [
@@ -94,9 +106,11 @@ const updateChoices = [
         name: 'update',
         choices: [
             'Update Employee',
-            'Update Department',
-            'Update Role', '[Quit]']
+            'Update Department', ,
+            'Update Role', '[Quit]'],
+        validate: validate.input
     }
+
 ];
 
 const addEmployeeChoices = [
@@ -104,21 +118,25 @@ const addEmployeeChoices = [
         type: 'input',
         message: `Enter the first name of new employee`,
         name: `first_name`,
+        validate: validate.name
     },
     {
         type: 'input',
         message: `Enter the last name of new employee`,
         name: `last_name`,
+        validate: validate.name
     },
     {
-        type: 'number',
+        type: 'innput',
         message: `Enter the role id of new employee`,
         name: `role_id`,
+        validate: validate.id
     },
     {
-        type: 'number',
+        type: 'input',
         message: `Enter the manager id of new employee`,
         name: `manager_id`,
+        validate: validate.id
     }
 ]
 
@@ -127,16 +145,19 @@ const addRoleChoices = [
         type: 'input',
         message: `Enter the title of the role`,
         name: `title`,
+        validate: validate.name
     },
     {
-        type: 'number',
+        type: 'input',
         message: `Enter the salary of the role`,
         name: `salary`,
+        validate: validate.id
     },
     {
-        type: 'number',
+        type: 'input',
         message: `Enter the department_id`,
         name: `department_id`,
+        validate: validate.id
     }
 ]
 
@@ -146,6 +167,7 @@ const addDepartmentChoices = [
         type: 'input',
         message: `Enter a name of the new department`,
         name: `name`,
+        validate: validate.name
     }
 ]
 
@@ -153,12 +175,14 @@ const deleteEmployeeChoices = [
     {
         type: "input",
         message: "Enter the first name of the employee you wish to delete:",
-        name: "first_name"
+        name: "first_name",
+        validate: validate.name
     },
     {
         type: "input",
         message: "Enter the last name of the employee you wish to delete:",
         name: "last_name",
+        validate: validate.name
     }
 ]
 
@@ -166,7 +190,8 @@ const deleteRoleChoices = [
     {
         type: "input",
         message: "Enter the title name of the role you wish to delete:",
-        name: "title"
+        name: "title",
+        validate: validate.name
     }
 ]
 
@@ -174,7 +199,8 @@ const deleteDepartmentChoices = [
     {
         type: "input",
         message: "Enter the name of the department you wish to delete:",
-        name: "name"
+        name: "name",
+        validate: validate.name
     }
 ]
 
@@ -184,26 +210,30 @@ const updateEmployeeChoices = [
         type: "list",
         message: "What would you like to update?",
         name: "choices",
-        choices: ["name", "role_id", "manager_id"]
+        choices: ["name", "role_id", "manager_id"],
+        validate: validate.input
     }
 
 ]
 
 const updateNameOfEmployeeChoices = [
     {
-        type: "number",
+        type: "input",
         message: "Enter the employee id of the employee you wish to update:",
-        name: "id"
+        name: "id",
+        validate: validate.id
     },
     {
         type: "input",
         message: "Update the first name:",
-        name: "first_name"
+        name: "first_name",
+        validate: validate.name
     },
     {
         type: "input",
         message: "Update the last name:",
-        name: "last_name"
+        name: "last_name",
+        validate: validate.name
     }
 ]
 
@@ -211,24 +241,28 @@ const updateRoleIdOfEmployeeChoices = [
     {
         type: "input",
         message: "Enter the employee id of the employee you wish to update:",
-        name: "id"
+        name: "id",
+        validate: validate.id
     },
     {
-        type: "number",
+        type: "input",
         message: "Enter the new role id of the employee you wish to update:",
-        name: "new_role"
+        name: "new_role",
+        validate: validate.id
     }
 ]
 const updateManagerIdOfEmployeeChoices = [
     {
-        type: "number",
+        type: "input",
         message: "Enter the employee id of the employee you wish to update:",
-        name: "id"
+        name: "id",
+        validate: validate.id
     },
     {
-        type: "number",
+        type: "input",
         message: "Enter the new manager id of the employee you wish to update:",
-        name: "new_manager"
+        name: "new_manager",
+        validate: validate.id
     }
 ]
 
@@ -236,25 +270,29 @@ const updateRoleChoices = [
     {
         type: "input",
         message: "Enter the role title you wish to update:",
-        name: "title"
+        name: "title",
+        validate: validate.name
     },
     {
         type: "input",
         message: "Enter new title for the role:",
-        name: "new_title"
+        name: "new_title",
+        validate: validate.name
     }
 ]
 
 const updateDepartmentChoices = [
     {
-        type: "number",
+        type: "input",
         message: "Enter the department id you wish to update:",
-        name: "id"
+        name: "id",
+        validate: validate.id
     },
     {
         type: "input",
         message: "Enter new name for the department:",
-        name: "name"
+        name: "name",
+        validate: validate.name
     }
 ]
 
@@ -321,12 +359,12 @@ const viewData = () => {
                 return getAll(data.view);
             case 'role':
                 return getAll(data.view);
-            // case 'View Employee By Manager':
-            //     return getEmployeeByManager();
-            // case 'View Employee By Department':
-            //     return getEmployeeByDepartment();
-            // case 'View Total Utilized Budget of Department':
-            //     return getBudget();
+            case 'View Employee By Manager':
+                return getEmployeeByManager();
+            case 'View Employee By Department':
+                return getEmployeeByDepartment();
+            case 'View Total Utilized Budget of Department':
+                return getBudget();
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
