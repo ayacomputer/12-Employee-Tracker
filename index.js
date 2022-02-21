@@ -652,6 +652,7 @@ const updateRole = () => {
 // };
 
 // const getEmployeeByManager = () => {
+//     const sql = `SELECT * FROM employee WHERE manager_id IS NOT NULL`
 //     inquirer.prompt(managerChoice)
 //         .then((data) => {
 //             const sql = `SELECT * FROM employee WHERE department_id=${data.managerChoice}`;
@@ -662,5 +663,17 @@ const updateRole = () => {
 //                 printTable(rows);
 //             });
 //         })
+
+// };
+
+// const getBudget = () => {
+//     const sql = `SELECT department_id as ID, name as Department, SUM(salary) AS Total Budget FROM role JOIN department ON role.department_id = department.id GROUP BY department_id;`
+//     db.query(sql, (err, rows) => {
+//         if (err) {
+//             return console.error('Something went wrong', err);
+//         }
+//         printTable(rows);
+//     });
+//     setTimeout(init, 300);
 
 // };
