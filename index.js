@@ -43,6 +43,7 @@ const questions = [
         message: 'What would you like to do?',
         name: 'initial',
         choices: ['View', 'Add', 'Update', 'Delete', '[Quit]']
+
     }];
 
 const viewChoices = [
@@ -110,12 +111,12 @@ const addEmployeeChoices = [
         name: `last_name`,
     },
     {
-        type: 'input',
+        type: 'number',
         message: `Enter the role id of new employee`,
         name: `role_id`,
     },
     {
-        type: 'input',
+        type: 'number',
         message: `Enter the manager id of new employee`,
         name: `manager_id`,
     }
@@ -128,12 +129,12 @@ const addRoleChoices = [
         name: `title`,
     },
     {
-        type: 'input',
+        type: 'number',
         message: `Enter the salary of the role`,
         name: `salary`,
     },
     {
-        type: 'input',
+        type: 'number',
         message: `Enter the department_id`,
         name: `department_id`,
     }
@@ -190,7 +191,7 @@ const updateEmployeeChoices = [
 
 const updateNameOfEmployeeChoices = [
     {
-        type: "input",
+        type: "number",
         message: "Enter the employee id of the employee you wish to update:",
         name: "id"
     },
@@ -213,19 +214,19 @@ const updateRoleIdOfEmployeeChoices = [
         name: "id"
     },
     {
-        type: "input",
+        type: "number",
         message: "Enter the new role id of the employee you wish to update:",
         name: "new_role"
     }
 ]
 const updateManagerIdOfEmployeeChoices = [
     {
-        type: "input",
+        type: "number",
         message: "Enter the employee id of the employee you wish to update:",
         name: "id"
     },
     {
-        type: "input",
+        type: "number",
         message: "Enter the new manager id of the employee you wish to update:",
         name: "new_manager"
     }
@@ -246,7 +247,7 @@ const updateRoleChoices = [
 
 const updateDepartmentChoices = [
     {
-        type: "input",
+        type: "number",
         message: "Enter the department id you wish to update:",
         name: "id"
     },
@@ -562,6 +563,21 @@ const updateDepartment = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The department name has been successfully updated');
+
+        });
+        setTimeout(init, 300);
+    }
+    )
+}
+
+const updateRole = () => {
+    promptUpdateRole().then((data) => {
+        const sql = `UPDATE role SET title = "${data.new_title}" WHERE id = "${data.title}"; `;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The role title has been successfully updated');
 
         });
         setTimeout(init, 300);

@@ -50,14 +50,16 @@
  ![ProductScreen Shot](./assets/product.gif)
 
 
-This is a command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL.
+This is a command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL.The users can view the information about the employees' id, role, department, salary and manager as well as they can update the data and delete the data.
 
 <p align = "right">(<a href="#top">back to top</a>)</>
 
  ## Built With
 * [Node.js](https://nodejs.org/) 
-* Inquirer 
-* MySQL 
+* [MySQL2](https://www.npmjs.com/package/mysql2) 
+* [Express.js](https://www.npmjs.com/package/express) 
+* [dotenv](https://www.npmjs.com/package/dotenv) 
+
 <p align = "right"> (<a href="#top">back to top</a>)</>
 
 ## Usage
