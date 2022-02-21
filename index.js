@@ -94,8 +94,7 @@ const updateChoices = [
         choices: [
             'Update Employee',
             'Update Department',
-            'Update Role',
-            'Update Manager', '[Quit]']
+            'Update Role', '[Quit]']
     }
 ];
 
@@ -289,7 +288,7 @@ const promptUpdateNameOfEmployee = () => inquirer.prompt(updateNameOfEmployeeCho
 const promptUpdateManagerIdOfEmployee = () => inquirer.prompt(updateManagerIdOfEmployeeChoices);
 const promptUpdateDepartment = () => inquirer.prompt(updateDepartmentChoices);
 const promptUpdateRole = () => inquirer.prompt(updateRoleChoices);
-const promptUpdateManager = () => inquirer.prompt(updateManagerChoices);
+
 
 
 const init = async () => {
@@ -373,8 +372,6 @@ const updateData = (data) => {
                 return updateDepartment(data.update);
             case 'Update Role':
                 return updateRole(data.update);
-            case 'Update Manager':
-                return updateEmployeeManager(data.update);
             case '[Quit]':
                 return goodByeMsg();
             default: goodByeMsg();
