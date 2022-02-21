@@ -393,17 +393,16 @@ const getAll = (data) => {
 }
 const viewAllInfo = () => {
     const sql = `
-    DROP TABLE IF EXISTS allinfo;
-CREATE TABLE allinfo AS
-SELECT employee.id AS id, 
-    CONCAT(employee.first_name," ",employee.last_name) AS 'Full Name', 
-    department.name AS 'department', 
-    role.title AS 'role', 
-    role.salary AS 'salary', 
-    manager_id AS manager_id
-FROM employee
-JOIN role ON employee.role_id = role.id
-JOIN department ON role.department_id = department.id;`
+    SELECT employee.id AS ID, 
+    CONCAT (employee.first_name, " ", employee.last_name) AS Name,
+    role.title AS Title, 
+    department.name AS Department,
+    role.salary AS Salary, 
+    CONCAT (manager.first_name, " ", manager.last_name) AS Manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;`
     db.query(sql, (err, rows) => {
         if (err) {
             return console.error('Something went wrong', err);
@@ -516,7 +515,6 @@ const updateEmployee = async () => {
     };
     ;
 }
-
 const updateNameOfEmployee = () => {
     promptUpdateNameOfEmployee().then((data) => {
         const sql = `UPDATE employee SET first_name = "${data.first_name}", last_name = "${data.last_name}" WHERE id = "${data.id}"; `;
@@ -531,8 +529,6 @@ const updateNameOfEmployee = () => {
     }
     )
 }
-
-
 const updateRoleIdOfEmployee = () => {
     promptUpdateRoleIdOfEmployee().then((data) => {
         const sql = `UPDATE employee SET role_id = "${data.new_role}" WHERE id = "${data.id}"; `;
@@ -561,6 +557,22 @@ const updateManagerIdOfEmployee = () => {
     }
     )
 }
+const updateDepartment = () => {
+    promptUpdateDepartment().then((data) => {
+        const sql = `UPDATE department SET name = "${data.name}" WHERE id = "${data.id}"; `;
+        db.query(sql, (err, rows) => {
+            if (err) {
+                return console.error('Something went wrong', err);
+            }
+            console.log('The department name has been successfully updated');
+
+        });
+        setTimeout(init, 300);
+    }
+    )
+}
+
+
 // const getEmployeeByDepartment = () => {
 //     inquirer.prompt(
 //         {
