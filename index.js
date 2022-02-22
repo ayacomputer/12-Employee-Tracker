@@ -31,7 +31,7 @@ db.connect(function (err) {
         console.log(chalk.magenta('\n------------------------------------------------------------------------------------\n'));
         console.log(chalk.magenta('Please answer the following questions:'));
 
-        setTimeout(init, 300);
+        init();
     });
 });
 
@@ -127,7 +127,7 @@ const addEmployeeChoices = [
         validate: validate.name
     },
     {
-        type: 'innput',
+        type: 'input',
         message: `Enter the role id of new employee`,
         name: `role_id`,
         validate: validate.id
@@ -349,7 +349,6 @@ const init = async () => {
 };
 const viewData = () => {
     promptView().then((data) => {
-        console.log(data.view)
         switch (data.view) {
             case 'all':
                 return viewAllInfo();
@@ -424,8 +423,8 @@ const getAll = (data) => {
             return console.error('Something went wrong', err);
         }
         printTable(rows);
+        init();
     });
-    setTimeout(init, 300);
 }
 const viewAllInfo = () => {
     const sql = `
@@ -444,8 +443,9 @@ const viewAllInfo = () => {
             return console.error('Something went wrong', err);
         }
         printTable(rows);
+        init();
     });
-    setTimeout(init, 300);
+
 }
 const addEmployee = (data) => {
     promptAddEmployee().then((data) => {
@@ -457,9 +457,8 @@ const addEmployee = (data) => {
                 return console.error('Something went wrong', err);
             }
             console.log('The employee successfully added')
-
+            init();
         });
-        setTimeout(init, 300);
 
     })
 
@@ -475,9 +474,8 @@ const addRole = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The role successfully added')
-
+            init();
         });
-        setTimeout(init, 300);
 
     })
 };
@@ -491,9 +489,8 @@ const addDepartment = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The department successfully added')
-
+            init();
         });
-        setTimeout(init, 300);
 
     })
 };
@@ -505,9 +502,8 @@ const deleteEmployee = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The employee has been deleted.')
-
+            init();
         });
-        setTimeout(init, 300);
     })
 }
 const deleteRole = () => {
@@ -518,9 +514,8 @@ const deleteRole = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The role has been deleted.')
-
+            init();
         });
-        setTimeout(init, 300);
     })
 }
 const deleteDepartment = () => {
@@ -531,9 +526,8 @@ const deleteDepartment = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The department has been deleted.')
-
+            init();
         });
-        setTimeout(init, 300);
     })
 }
 const updateEmployee = async () => {
@@ -559,9 +553,8 @@ const updateNameOfEmployee = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The employee name successfully updated')
-
+            init();
         });
-        setTimeout(init, 300);
     }
     )
 }
@@ -573,9 +566,9 @@ const updateRoleIdOfEmployee = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The role id has been successfully updated');
-
+            init();
         });
-        setTimeout(init, 300);
+
     }
     )
 }
@@ -587,9 +580,10 @@ const updateManagerIdOfEmployee = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The manager id has been successfully updated');
+            init();
 
         });
-        setTimeout(init, 300);
+
     }
     )
 }
@@ -601,12 +595,12 @@ const updateDepartment = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The department name has been successfully updated');
+            init();
 
         });
-        setTimeout(init, 300);
     }
     )
-}
+};
 
 const updateRole = () => {
     promptUpdateRole().then((data) => {
@@ -616,12 +610,12 @@ const updateRole = () => {
                 return console.error('Something went wrong', err);
             }
             console.log('The role title has been successfully updated');
+            init();
 
         });
-        setTimeout(init, 300);
     }
     )
-}
+};
 
 
 // const getEmployeeByDepartment = () => {
@@ -651,20 +645,49 @@ const updateRole = () => {
 
 // };
 
-// const getEmployeeByManager = () => {
-//     const sql = `SELECT * FROM employee WHERE manager_id IS NOT NULL`
-//     inquirer.prompt(managerChoice)
-//         .then((data) => {
-//             const sql = `SELECT * FROM employee WHERE department_id=${data.managerChoice}`;
-//             db.query(sql, (err, rows) => {
-//                 if (err) {
-//                     return console.error('Something went wrong', err);
-//                 }
-//                 printTable(rows);
-//             });
-//         })
+const getEmployeeByManager = () => {
+    console.log("function is called")
+    const sql = `SELECT * FROM employee WHERE manager_id IS NOT NULL;`;
+    db.query(sql, (err, rows) => {
+        console.log(rows);
+        inquirer.prompt([{
 
-// };
+            type: "list",
+            name: "manager",
+            message: "Select manager",
+            choices: rows.map((row) => {
+                return {
+                    name: `${row.fist_name} ${row.last_name}`,
+                    value: row.id,
+                }
+            }),
+            validate: validate.input
+
+        }]).then((results) => {
+            console.log(results);
+            const sql = `SELECT CONCAT (manager.first_name, " ", manager.last_name) AS Manager
+                FROM employee,
+                employee.id AS ID, 
+                CONCAT (employee.first_name, " ", employee.last_name) AS Name,
+                role.title AS Title, 
+                department.name AS Department,
+                role.salary AS Salary, 
+
+                LEFT JOIN role ON employee.role_id = role.id
+                LEFT JOIN department ON role.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id
+                WHERE manager_id = ?;`;
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    return console.error('Something went wrong', err);
+                }
+                printTable(rows);
+            });
+
+        })
+    });
+
+};
 
 // const getBudget = () => {
 //     const sql = `SELECT department_id as ID, name as Department, SUM(salary) AS Total Budget FROM role JOIN department ON role.department_id = department.id GROUP BY department_id;`
@@ -675,5 +698,4 @@ const updateRole = () => {
 //         printTable(rows);
 //     });
 //     setTimeout(init, 300);
-
 // };
