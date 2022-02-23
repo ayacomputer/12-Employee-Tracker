@@ -406,10 +406,12 @@ const updateRole = () => {
 
 const getEmployeeByManager = () => {
     console.log("function is called")
-    const sql = `SELECT employee.manager_id AS ID, CONCAT(employee.first_name, ' ', employee.last_name) AS manager
+    const sql = `SELECT employee.manager_id AS ID, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
     FROM employee employee 
   	LEFT JOIN employee manager
-	ON manager.id = employee.manager_id;`
+	ON manager.id = employee.manager_id
+    WHERE manager.id IS NOT NULL
+    GROUP BY employee.manager_id;`
     db.query(sql, (err, rows) => {
         printTable(rows);
         console.log(rows);
@@ -443,7 +445,7 @@ const getEmployeeByManager = () => {
             LEFT JOIN role ON employee.role_id = role.id
             LEFT JOIN department ON role.department_id = department.id
             LEFT JOIN employee manager ON employee.manager_id = manager.id
-            WHERE employee.id = ${results.manager}; `;
+            WHERE employee.manager_id = ${results.manager}; `;
             db.query(sql, (err, rows) => {
                 if (err) {
                     return console.error('Something went wrong', err);
