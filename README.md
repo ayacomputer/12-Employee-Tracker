@@ -66,7 +66,7 @@ This is a command-line application to manage a company's employee database, usin
 
   The Following animation shows this application's functionality(questions).
 
-[the walk through video](https://drive.google.com/file/d/1nksW-2mFCZvWos0xTo0kthkxhypIUfgC/preview "@embed")
+![the walk through video](https://drive.google.com/file/d/1nksW-2mFCZvWos0xTo0kthkxhypIUfgC/preview)(https://drive.google.com/file/d/1nksW-2mFCZvWos0xTo0kthkxhypIUfgC/view)
 [Click here to see the walk through video on website](https://drive.google.com/file/d/1nksW-2mFCZvWos0xTo0kthkxhypIUfgC/view)
 
 <p align ="right">(<a href="#top">back to top</a>)</>
