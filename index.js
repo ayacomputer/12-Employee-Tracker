@@ -510,7 +510,9 @@ const getBudget = () => {
                 if (err) {
                     return console.error('Something went wrong', err);
                 }
-                const sql = `SELECT SUM(salary) from `
+                printTable(rows);
+                init();
+
             });
         })
 
