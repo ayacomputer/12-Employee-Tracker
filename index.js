@@ -377,35 +377,52 @@ const updateRole = () => {
 };
 
 
-// const getEmployeeByDepartment = () => {
-//     inquirer.prompt(
-//         {
-//             type: 'list',
-//             message: 'Which department would you like to view?',
-//             name: 'department',
-//             choice: departmentArray,
-//         }
-//     )
-//         .then((data) => {
-//             const sql = `
-//             SELECT department.name, department.id, employee.first_name, role.name, role.id
-//             FROM employee
-//             LEFT JOIN employee ON employee.role_id = role.id
-//             LEFT JOIN department ON role.department_id = department.id
-//             WHERE department.id = ${data.department};
-//             `;
-//             db.query(sql, (err, rows) => {
-//                 if (err) {
-//                     return console.error('Something went wrong', err);
-//                 }
-//                 printTable(rows);
-//             });
-//         })
+const getEmployeeByDepartment = () => {
+    const sql = `SELECT * FROM department`
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        console.log(rows);
+        printTable(rows);
+        inquirer.prompt([{
+            type: 'list',
+            name: 'department',
+            message: 'Select department',
+            choices: rows.map((row) => {
+                return {
+                    name: row.name,
+                    value: row.id
+                }
+            }),
+            validate: validate.input
+        }]).then((data) => {
+            const sql = `
+                SELECT department.id AS ID,  department.name AS Department, employee.id AS employee_id,
+                CONCAT(employee.first_name, " ", employee.last_name) AS Employee, role.title AS Title, role.salary AS Salary,
+                CONCAT(manager.first_name, " ", manager.last_name) AS Manager
+                FROM employee
+                LEFT JOIN role ON employee.role_id =role.id
+                LEFT JOIN department ON role.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id
+                WHERE department.id = ${data.department};
+                `;
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    return console.error('Something went wrong', err);
+                }
+                printTable(rows);
+                init();
+            });
+        })
 
-// };
+    })
+
+
+
+};
 
 const getEmployeeByManager = () => {
-    console.log("function is called")
     const sql = `SELECT employee.manager_id AS ID, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
     FROM employee employee 
   	LEFT JOIN employee manager
@@ -414,7 +431,6 @@ const getEmployeeByManager = () => {
     GROUP BY employee.manager_id;`
     db.query(sql, (err, rows) => {
         printTable(rows);
-        console.log(rows);
 
         if (err) {
             return console.error('Something went wrong', err);
