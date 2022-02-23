@@ -675,7 +675,7 @@ const getEmployeeByManager = () => {
                 LEFT JOIN role ON employee.role_id = role.id
                 LEFT JOIN department ON role.department_id = department.id
                 LEFT JOIN employee manager ON employee.manager_id = manager.id
-                WHERE employee.manager_id = ${results.manager};`;
+                WHERE manager_id = ${results.manager};`;
             db.query(sql, (err, rows) => {
                 if (err) {
                     return console.error('Something went wrong', err);
