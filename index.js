@@ -358,11 +358,11 @@ const viewData = () => {
                 return getAll(data.view);
             case 'role':
                 return getAll(data.view);
-            case 'View Employee By Manager':
+            case 'employeeByManager':
                 return getEmployeeByManager();
-            case 'View Employee By Department':
+            case 'employeeByDepartment':
                 return getEmployeeByDepartment();
-            case 'View Total Utilized Budget of Department':
+            case 'budget':
                 return getBudget();
             case '[Quit]':
                 return goodByeMsg();
@@ -657,26 +657,25 @@ const getEmployeeByManager = () => {
             message: "Select manager",
             choices: rows.map((row) => {
                 return {
-                    name: `${row.fist_name} ${row.last_name}`,
-                    value: row.id,
+                    name: `${row.first_name} ${row.last_name}`,
+                    value: row.manager_id,
                 }
             }),
             validate: validate.input
 
         }]).then((results) => {
             console.log(results);
-            const sql = `SELECT CONCAT (manager.first_name, " ", manager.last_name) AS Manager
-                FROM employee,
-                employee.id AS ID, 
+            const sql = `SELECT employee.id AS ID,
                 CONCAT (employee.first_name, " ", employee.last_name) AS Name,
                 role.title AS Title, 
                 department.name AS Department,
                 role.salary AS Salary, 
-
+                CONCAT (manager.first_name, " ", manager.last_name) AS Manager, 
+                FROM employee
                 LEFT JOIN role ON employee.role_id = role.id
                 LEFT JOIN department ON role.department_id = department.id
                 LEFT JOIN employee manager ON employee.manager_id = manager.id
-                WHERE manager_id = ?;`;
+                WHERE employee.manager_id = ${results.manager};`;
             db.query(sql, (err, rows) => {
                 if (err) {
                     return console.error('Something went wrong', err);
