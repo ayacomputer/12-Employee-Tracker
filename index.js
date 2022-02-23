@@ -496,15 +496,14 @@ const getBudget = () => {
             validate: validate.input
         }]).then((data) => {
             const sql = `
-                SELECT department.id AS ID,  department.name AS Department, employee.id AS employee_id,
-                CONCAT(employee.first_name, " ", employee.last_name) AS Employee, role.title AS Title, role.salary AS Salary,
-                CONCAT(manager.first_name, " ", manager.last_name) AS Manager
-                SUM(Salary) Total budget
-                FROM employee
-                LEFT JOIN role ON employee.role_id =role.id
-                LEFT JOIN department ON role.department_id = department.id
-                LEFT JOIN employee manager ON employee.manager_id = manager.id
-                WHERE department.id = ${data.department};
+            SELECT role.department_id AS id, 
+            department.name AS Department, 
+            SUM (role.salary) AS total 
+            FROM role 
+            LEFT JOIN department 
+            ON role.department_id = department.id 
+            GROUP BY department_id
+            WHERE department.id = ${data.department};
                 `;
             db.query(sql, (err, rows) => {
                 if (err) {
