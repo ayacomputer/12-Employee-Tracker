@@ -475,13 +475,43 @@ const getEmployeeByManager = () => {
 
 };
 
-// const getBudget = () => {
-//     const sql = `SELECT department_id as ID, name as Department, SUM(salary) AS Total Budget FROM role JOIN department ON role.department_id = department.id GROUP BY department_id; `
-//     db.query(sql, (err, rows) => {
-//         if (err) {
-//             return console.error('Something went wrong', err);
-//         }
-//         printTable(rows);
-//     });
-//     setTimeout(init, 300);
-// };
+const getBudget = () => {
+    const sql = `SELECT * FROM department`
+    db.query(sql, (err, rows) => {
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
+        console.log(rows);
+        printTable(rows);
+        inquirer.prompt([{
+            type: 'list',
+            name: 'department',
+            message: 'Select department',
+            choices: rows.map((row) => {
+                return {
+                    name: row.name,
+                    value: row.id
+                }
+            }),
+            validate: validate.input
+        }]).then((data) => {
+            const sql = `
+                SELECT department.id AS ID,  department.name AS Department, employee.id AS employee_id,
+                CONCAT(employee.first_name, " ", employee.last_name) AS Employee, role.title AS Title, role.salary AS Salary,
+                CONCAT(manager.first_name, " ", manager.last_name) AS Manager
+                SUM(Salary) Total budget
+                FROM employee
+                LEFT JOIN role ON employee.role_id =role.id
+                LEFT JOIN department ON role.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id
+                WHERE department.id = ${data.department};
+                `;
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    return console.error('Something went wrong', err);
+                }
+                const sql = `SELECT SUM(salary) from `
+            });
+        })
+
+    })
