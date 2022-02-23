@@ -210,7 +210,6 @@ const viewAllInfo = () => {
 }
 const addEmployee = (data) => {
     promptAddEmployee().then((data) => {
-        employeeArray.push(data);
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
     VALUES("${data.first_name}", "${data.last_name}", ${data.role_id}, ${data.manager_id}); `;
         db.query(sql, (err, rows) => {
@@ -383,8 +382,6 @@ const getEmployeeByDepartment = () => {
         if (err) {
             return console.error('Something went wrong', err);
         }
-        console.log(rows);
-        printTable(rows);
         inquirer.prompt([{
             type: 'list',
             name: 'department',
@@ -430,7 +427,6 @@ const getEmployeeByManager = () => {
     WHERE manager.id IS NOT NULL
     GROUP BY employee.manager_id;`
     db.query(sql, (err, rows) => {
-        printTable(rows);
 
         if (err) {
             return console.error('Something went wrong', err);
@@ -449,7 +445,6 @@ const getEmployeeByManager = () => {
             validate: validate.input
 
         }]).then((results) => {
-            console.log(results);
             const sql = `
             SELECT employee.id AS ID,
         CONCAT(employee.first_name, " ", employee.last_name) AS Name,
@@ -481,8 +476,6 @@ const getBudget = () => {
         if (err) {
             return console.error('Something went wrong', err);
         }
-        console.log(rows);
-        printTable(rows);
         inquirer.prompt([{
             type: 'list',
             name: 'department',
