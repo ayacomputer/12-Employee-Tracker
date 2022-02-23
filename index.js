@@ -3,9 +3,26 @@ const mysql = require('mysql2');
 const { printTable } = require('console-table-printer');
 const figlet = require('figlet');
 const chalk = require('chalk');
-let departmentArray = [];
-let employeeArray = [];
-let roleArray = [];
+const {
+    validate,
+    questions,
+    viewChoices,
+    addChoices,
+    deleteChoices,
+    updateChoices,
+    addEmployeeChoices,
+    addRoleChoices,
+    addDepartmentChoices,
+    deleteEmployeeChoices,
+    deleteRoleChoices,
+    deleteDepartmentChoices,
+    updateEmployeeChoices,
+    updateNameOfEmployeeChoices,
+    updateRoleIdOfEmployeeChoices,
+    updateManagerIdOfEmployeeChoices,
+    updateRoleChoices,
+    updateDepartmentChoices,
+} = require('./utils/questions');
 
 
 require('dotenv').config();
@@ -36,265 +53,7 @@ db.connect(function (err) {
 });
 
 
-const validate = {
-    input: input => input !== '' ? true : "Please select a choice",
-    name: input => input !== '' ? true : "Please enter a name.",
-    id: input => Number.isInteger(Number(input)) && Number(input) > 0 ? true : "Please enter a positive number.",
-}
 
-
-const questions = [
-    {
-        type: 'list',
-        message: 'What would you like to do?',
-        name: 'initial',
-        choices: ['View', 'Add', 'Update', 'Delete', '[Quit]'],
-        validate: validate.input
-
-    }];
-
-const viewChoices = [
-    {
-        type: 'list',
-        message: 'What would you like to view?',
-        name: 'view',
-        choices: [
-            { value: 'all', name: "View All Information" },
-            { value: 'department', name: "View All Departments" },
-            { value: 'role', name: "View All Roles" },
-            { value: 'employee', name: "View All Employees" },
-            { value: 'employeeByManager', name: "View Employee By Manager" },
-            { value: 'employeeByDepartment', name: "View Employee By Department" },
-            { value: 'budget', name: "View Total Utilized Budget of Department" },
-            '[Quit]'
-        ],
-        validate: validate.input
-    }];
-
-const addChoices = [
-    {
-        type: 'list',
-        message: 'What would you like to add?',
-        name: 'add',
-        choices: ['Add Employee',
-            'Add Department',
-            'Add Role', '[Quit]'],
-        validate: validate.input
-
-    }
-
-];
-
-const deleteChoices = [
-    {
-        type: 'list',
-        message: 'What would you like to delete?',
-        name: 'delete',
-        choices: ['Delete Employee',
-            'Delete Department',
-            'Delete Role', '[Quit]'],
-        validate: validate.input
-
-    }
-
-];
-
-const updateChoices = [
-    {
-        type: 'list',
-        message: 'What would you like to update?',
-        name: 'update',
-        choices: [
-            'Update Employee',
-            'Update Department', ,
-            'Update Role', '[Quit]'],
-        validate: validate.input
-    }
-
-];
-
-const addEmployeeChoices = [
-    {
-        type: 'input',
-        message: `Enter the first name of new employee`,
-        name: `first_name`,
-        validate: validate.name
-    },
-    {
-        type: 'input',
-        message: `Enter the last name of new employee`,
-        name: `last_name`,
-        validate: validate.name
-    },
-    {
-        type: 'input',
-        message: `Enter the role id of new employee`,
-        name: `role_id`,
-        validate: validate.id
-    },
-    {
-        type: 'input',
-        message: `Enter the manager id of new employee`,
-        name: `manager_id`,
-        validate: validate.id
-    }
-]
-
-const addRoleChoices = [
-    {
-        type: 'input',
-        message: `Enter the title of the role`,
-        name: `title`,
-        validate: validate.name
-    },
-    {
-        type: 'input',
-        message: `Enter the salary of the role`,
-        name: `salary`,
-        validate: validate.id
-    },
-    {
-        type: 'input',
-        message: `Enter the department_id`,
-        name: `department_id`,
-        validate: validate.id
-    }
-]
-
-
-const addDepartmentChoices = [
-    {
-        type: 'input',
-        message: `Enter a name of the new department`,
-        name: `name`,
-        validate: validate.name
-    }
-]
-
-const deleteEmployeeChoices = [
-    {
-        type: "input",
-        message: "Enter the first name of the employee you wish to delete:",
-        name: "first_name",
-        validate: validate.name
-    },
-    {
-        type: "input",
-        message: "Enter the last name of the employee you wish to delete:",
-        name: "last_name",
-        validate: validate.name
-    }
-]
-
-const deleteRoleChoices = [
-    {
-        type: "input",
-        message: "Enter the title name of the role you wish to delete:",
-        name: "title",
-        validate: validate.name
-    }
-]
-
-const deleteDepartmentChoices = [
-    {
-        type: "input",
-        message: "Enter the name of the department you wish to delete:",
-        name: "name",
-        validate: validate.name
-    }
-]
-
-
-const updateEmployeeChoices = [
-    {
-        type: "list",
-        message: "What would you like to update?",
-        name: "choices",
-        choices: ["name", "role_id", "manager_id"],
-        validate: validate.input
-    }
-
-]
-
-const updateNameOfEmployeeChoices = [
-    {
-        type: "input",
-        message: "Enter the employee id of the employee you wish to update:",
-        name: "id",
-        validate: validate.id
-    },
-    {
-        type: "input",
-        message: "Update the first name:",
-        name: "first_name",
-        validate: validate.name
-    },
-    {
-        type: "input",
-        message: "Update the last name:",
-        name: "last_name",
-        validate: validate.name
-    }
-]
-
-const updateRoleIdOfEmployeeChoices = [
-    {
-        type: "input",
-        message: "Enter the employee id of the employee you wish to update:",
-        name: "id",
-        validate: validate.id
-    },
-    {
-        type: "input",
-        message: "Enter the new role id of the employee you wish to update:",
-        name: "new_role",
-        validate: validate.id
-    }
-]
-const updateManagerIdOfEmployeeChoices = [
-    {
-        type: "input",
-        message: "Enter the employee id of the employee you wish to update:",
-        name: "id",
-        validate: validate.id
-    },
-    {
-        type: "input",
-        message: "Enter the new manager id of the employee you wish to update:",
-        name: "new_manager",
-        validate: validate.id
-    }
-]
-
-const updateRoleChoices = [
-    {
-        type: "input",
-        message: "Enter the role title you wish to update:",
-        name: "title",
-        validate: validate.name
-    },
-    {
-        type: "input",
-        message: "Enter new title for the role:",
-        name: "new_title",
-        validate: validate.name
-    }
-]
-
-const updateDepartmentChoices = [
-    {
-        type: "input",
-        message: "Enter the department id you wish to update:",
-        name: "id",
-        validate: validate.id
-    },
-    {
-        type: "input",
-        message: "Enter new name for the department:",
-        name: "name",
-        validate: validate.name
-    }
-]
 
 
 
@@ -327,6 +86,7 @@ const promptUpdateNameOfEmployee = () => inquirer.prompt(updateNameOfEmployeeCho
 const promptUpdateManagerIdOfEmployee = () => inquirer.prompt(updateManagerIdOfEmployeeChoices);
 const promptUpdateDepartment = () => inquirer.prompt(updateDepartmentChoices);
 const promptUpdateRole = () => inquirer.prompt(updateRoleChoices);
+
 
 
 
@@ -416,6 +176,7 @@ const updateData = (data) => {
         };
     });
 };
+
 const getAll = (data) => {
     const sql = `SELECT * FROM ${data}`;
     db.query(sql, (err, rows) => {
@@ -466,7 +227,6 @@ const addEmployee = (data) => {
 }
 const addRole = () => {
     promptAddRole().then((data) => {
-        roleArray.push(data);
         const sql = `INSERT INTO role(title, salary, department_id)
     VALUES("${data.title}", "${data.salary}", ${data.department_id}); `;
         db.query(sql, (err, rows) => {
@@ -481,7 +241,6 @@ const addRole = () => {
 };
 const addDepartment = () => {
     promptAddDepartment().then((data) => {
-        departmentArray.push(data);
         const sql = `INSERT INTO department(name)
     VALUES("${data.name}"); `;
         db.query(sql, (err, rows) => {
@@ -647,9 +406,17 @@ const updateRole = () => {
 
 const getEmployeeByManager = () => {
     console.log("function is called")
-    const sql = `SELECT * FROM employee WHERE manager_id IS NOT NULL;`;
+    const sql = `SELECT employee.manager_id AS ID, CONCAT(employee.first_name, ' ', employee.last_name) AS manager
+    FROM employee employee 
+  	LEFT JOIN employee manager
+	ON manager.id = employee.manager_id;`
     db.query(sql, (err, rows) => {
+        printTable(rows);
         console.log(rows);
+
+        if (err) {
+            return console.error('Something went wrong', err);
+        }
         inquirer.prompt([{
 
             type: "list",
@@ -657,8 +424,8 @@ const getEmployeeByManager = () => {
             message: "Select manager",
             choices: rows.map((row) => {
                 return {
-                    name: `${row.first_name} ${row.last_name}`,
-                    value: row.manager_id,
+                    name: row.manager,
+                    value: row.ID,
                 }
             }),
             validate: validate.input
@@ -666,17 +433,17 @@ const getEmployeeByManager = () => {
         }]).then((results) => {
             console.log(results);
             const sql = `
-            SELECT employee.id AS ID, 
-            CONCAT (employee.first_name, " ", employee.last_name) AS Name,
-            role.title AS Title, 
-            department.name AS Department,
-            role.salary AS Salary, 
-            CONCAT (manager.first_name, " ", manager.last_name) AS Manager
+            SELECT employee.id AS ID,
+        CONCAT(employee.first_name, " ", employee.last_name) AS Name,
+            role.title AS Title,
+                department.name AS Department,
+                    role.salary AS Salary,
+                        CONCAT(manager.first_name, " ", manager.last_name) AS Manager
             FROM employee
             LEFT JOIN role ON employee.role_id = role.id
             LEFT JOIN department ON role.department_id = department.id
             LEFT JOIN employee manager ON employee.manager_id = manager.id
-            WHERE employee.manager_id = ${results.manager};`;
+            WHERE employee.id = ${results.manager}; `;
             db.query(sql, (err, rows) => {
                 if (err) {
                     return console.error('Something went wrong', err);
@@ -691,7 +458,7 @@ const getEmployeeByManager = () => {
 };
 
 // const getBudget = () => {
-//     const sql = `SELECT department_id as ID, name as Department, SUM(salary) AS Total Budget FROM role JOIN department ON role.department_id = department.id GROUP BY department_id;`
+//     const sql = `SELECT department_id as ID, name as Department, SUM(salary) AS Total Budget FROM role JOIN department ON role.department_id = department.id GROUP BY department_id; `
 //     db.query(sql, (err, rows) => {
 //         if (err) {
 //             return console.error('Something went wrong', err);

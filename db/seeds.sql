@@ -22,16 +22,16 @@ VALUES ("Full Stack Developper", 100000,2),
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Minnie", "Mouse",1,null),
        ("Mickey", "Mouse",2,1),
-       ("Donald", "Duck",3,2),
+       ("Donald", "Duck",3,1),
        ("Daisy", "Duck",4,3),
-       ("Cruella", "De Vill",5,4),
+       ("Cruella", "De Vill",5,null),
        ("Tinker", "Bell",4,5),
        ("Winnie", "The Pooh",3,6),
        ("Snow", "White",2,7),
-       ("Mike", "Wazowskki",1,8),
-        ("Queen", "Elsa",3,9),
+       ("Mike", "Wazowskki",1,null),
+        ("Queen", "Elsa",3,3),
         ("Peter", "Pan",8,10),
-         ("Mad", "Hatter",2,11),
+         ("Mad", "Hatter",2,2),
         ("Buzz", "Lightyear",1,12),
-       ("Walt", "Disney",7,13);
+       ("Walt", "Disney",7,5);
        
