@@ -494,16 +494,15 @@ const getBudget = () => {
                 }
             }),
             validate: validate.input
-        }]).then((data) => {
+        }]).then((results) => {
             const sql = `
-            SELECT role.department_id AS id, 
-            department.name AS Department, 
-            SUM (role.salary) AS total 
-            FROM role 
-            LEFT JOIN department 
-            ON role.department_id = department.id 
-            GROUP BY department_id
-            WHERE department.id = ${data.department};
+            SELECT department.id AS department_id, department.name AS department, 
+            SUM(role.salary) AS total_budget
+            FROM employee
+            LEFT JOIN role ON employee.role_id =role.id
+            LEFT JOIN department ON role.department_id = department.id
+            GROUP BY department_id, department.name
+            HAVING department_id = ${results.department};
                 `;
             db.query(sql, (err, rows) => {
                 if (err) {
